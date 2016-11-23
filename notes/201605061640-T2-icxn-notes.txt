@@ -1,0 +1,125 @@
+{5}  -*- text -*-
+[0:
+
+Fri May  6 16:40:52 2016 Suppose we use a 2x8 connector and have a
+flex board connecting all four corners.  It has to support both edge
+and corner operations, even though the edge operations will be
+redundant between two corners in a full plug-up.
+
+(1) Main shared rails (e.g., 12V) Power and ground  (2 pins min)
+(2) Uart Rx/Tx to three neighbors                   (3 x 2 pins each = 6)
+(3) Race locks to three neighbors                   (3 x 2 pins each = 6)
+
+  :0][1:
+
+Fri May  6 21:26:38 2016 Does locking really go with just two wires?
+We cross over the lock pair in the interconnect (like we cross Tx/Rx)
+so that everybody has the same layout in terms of my pins vs your
+pins.  To try for the lock we we do:
+
+(a) OUR_REQUEST must already be 0 or else abort
+(b) gpioRead THEIR_REQUEST
+(c) if it is 1 then go to arbitrate
+(d) gpioWrite OUR_REQUEST to 1
+
+                 r=0 | w=0
+               /----\
+               |    |
+               |    |
+         /----b=0<--+-------+-----------+
+         |     ^            |           |
+     r=1&|  a=1|         a=1|        a=1|
+     w=1 | &b=1|   a=0  &b=1| a=0   &b=1|    01
+         \--> b=1 -------->b=1 ------->b=1 ------->
+
+
+[2: 
+
+Fri May  6 22:23:27 2016 Suppose it's four, like two to request and
+two to acknowledge.  Can't we do this we combinational logic then,
+justt like XORs and shit?
+
+  weReq       WR
+  theyReq     TR
+  weValid     WV
+  theyValid   TV
+
+
+WR is a local GPIO set to output (from our CPU)
+TR is that same GPIO on their CPU
+
+WV = WR XOR TR  with a local XOR gate
+TV = the WV from the other side.
+
+                              WTWT
+                              RRVV
+The idle state of the lock is 0000
+
+To take the lock we set WR and loop reading the states.  
+If we
+
+1011
+
+or
+
+1100
+
+[3: 
+
+Fri May  6 22:36:57 2016 Again.  We want to be able to acquire an
+uncontested lock without any CPU involvement on their side.  Which
+means we need a flip-flop on their side that we can race against them
+to set.  So then when they decide to go for the lock, they'll see
+immediately that it's not theirs.   
+
+(I wonder if we can clock the lock circuit manually on a pin, bitbang
+a clock cycle when we want it.  Or if we could have an XOR clock
+controlled from either side that we race to toggle and see if it
+settles.)
+
+  weOwn  WO output of local clocked flip-flop on board
+ youOwn  TO output of local clocked flip-flop on board
+
+ lockIdle = ~(WO | TO) combinational
+
+  weReq  WR gpio out
+
+  weReq       WR gpio out
+  weOwn       WO gpio out
+  theyReq     TR gpio in   (their WR)
+  theyOwn     TO gpio in   (their WO)
+
+To try for the lock we set WR,WO == 10
+the
+
+  :3]
+
+  :2]
+
+
+  :1]
+[4: 
+
+Fri May  6 23:09:53 2016 
+
+
+  
+
+
+
+
+
+                                
+                                                
+         +-------+     +--v---+                     +--v---+         +-------+ 
+ WR----->| XOR   |     |clock |                     |clock |         | XOR   |  
+         |       |---->| D    |-+->.............--->| D    |-------->|       |---\
+     /-->|       |     |      | |                   |      |         |       |   |
+     |   +-------+     +------+ |                   +------+         +-------+   |
+     |                          |                                                |
+     \--------------------------/                                                |
+                                                                                  
+
+
+
+  :4]

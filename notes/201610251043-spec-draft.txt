@@ -1,0 +1,60 @@
+------
+Ackley 'T2' second-generation tile project
+
+---
+GOAL: An indefinitely-scalable hardware tile capable of 10 AER or
+better on the DReg benchmark, using a port of the existing MFM
+codebase.
+
+  Target board size: 3" x 3" x 0.75" or less.  
+
+  Target price: $100/tile +-25%, given an order of 100-500 tiles.
+
+---
+PROPOSED APPROACH: Combine an off-the-shelf SoM with a carrier board
+designed by this project.
+
+The SoM will provide CPU, RAM, flash, and fine-grained power
+management (e.g., 5V and down).  
+
+The carrier board will provide intertile connectivity, coarse-grained
+power management (e.g., 12V intertile switchable; 12V->5V intratile)
+and tile I/O capabilities (reset button, RGB LEDs, users button or
+accelerometer, USB micro-B connector, as budget allows).
+
+Sample candidate SoMs could include:
+
+DART-6UL
+http://www.variscite.com/products/system-on-module-som/cortex-a7/dart-6ul-freescale-imx-6ul
+
+CL-SOM-iMX7 Dual core, 
+http://www.compulab.co.il/products/computer-on-modules/cl-som-imx7-freescale-i-mx-7-system-on-module/
+.
+---
+PROJECT TIMELINE: Approximate HW landmarks:
+
+Q4.16
+  MCU select
+  IO eval and select
+  Intertile connector eval and select
+  Board design rev 1 out
+  Board rev 1 testing
+Q1.17
+  Board design rev 2 out
+  Board rev 2 testing
+  Final board spec selections / DfM
+Q2.17
+  Manufacturing prototype / test
+  Volume manufacture, target qty 250 tiles
+  Test & ship
+Q3.17
+  USE AT SCALE: AUG 10, 2017
+
+
+---
+
+OTHER CRITERIA: All project materials will be open-sourced for the
+benefit of society.  Software will be either GPL, LGPL, BSD, or MIT
+licensed.  All hardware work product produced by the project
+(including but not limited to gerbers, schematics, HW documentation)
+will be OSHW.

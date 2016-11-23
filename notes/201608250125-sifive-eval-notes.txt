@@ -1,0 +1,54 @@
+{3}  -*- text -*- 
+[0: 
+
+Thu Aug 25 01:26:02 2016 sifive.com
+
+RISC-V custom silicon
+TileLink cache coherence protocol?
+
+Design risk: High
+Potential performance: High
+NRE Estimate: Not yet known..
+Unit price: Not yet known
+
+Five stage pipeline.
+Pipelined multiplier with fixed two cycles latency
+or iterative multiplier with configurable latency.
+Three cycles on branch mispredict
+
+[1: 
+
+Thu Aug 25 01:34:35 2016 Apparently the U54 is the performance end and
+the E51 is the price end?  U54 has an MMU, E51 doesn't?
+
+The dev kit is $3500 at AVNET..  Hey, that's not even 18% of the
+budget.. 
+
+"These forums are monitored and moderated by SiFive, including
+co-founders and RISC-V inventors Andrew, Yunsup, and Krste"
+
+[2: 
+
+Thu Aug 25 01:45:44 2016 sifive is a rather young (2015) UCB spinout,
+it looks like.
+
+Krste Asanovic, UCB
+Yunsup Lee, UCB PhD and RISC-V designer
+Andrew Waterman, UCB PhD
+
+Backed by Sutter Hill Ventures.. (only?)
+
+https://riscv.org/board-of-directors/9
+
+Krste Asanovic, UC Berkeley/SiFive
+Zvonimir Bandic, Western Digital
+Charlie Hauck, Bluespec
+David Patterson, Retired
+Jothy Rosenberg, Draper Laboratories
+Frans Sijstermans, NVIDIA
+Ted Speers, Microsemi
+
+  :2]
+
+  :1]
+  :0]

@@ -1,0 +1,468 @@
+{46}  -*- text -*- 
+[0: 
+
+Thu Nov 17 17:06:41 2016 Am on 
+
+    $ cat /etc/issue
+    Ubuntu 14.04.5 LTS \n \l
+
+Installed virt-manager via synaptic
+
+[1: 
+
+Thu Nov 17 17:07:58 2016 Ran
+
+U -> System tools -> Virtual Machine Manager
+
+It hung until I closed synaptic.  Then told me I needed to install
+qemu-system and asked me if I wanted to do it.  I clicked yes, looked
+at a big package list, authorized, and it installed stuff.
+
+[2: 
+
+Thu Nov 17 17:10:35 2016 Then it failed saying 'Unable to connect to
+libvirt', and saying I should:
+
+    Verify that:
+     - The 'libvirt-bin' package is installed
+     - The 'libvirtd' daemon has been started
+     - You are member of the 'libvirtd' group
+
+I exited the virtual machine manager at that point.  I restarted
+synaptic and checked for packages.  I found that I do have libvirt-bin
+1.2.2-0etc already installed.
+
+I did this:
+
+    root@EDO2016:~# /etc/init.d/libvirt-bin status
+    libvirt-bin start/running, process 1056
+    root@EDO2016:~# 
+
+which seemed a bit ambiguous about whether it just changed state or
+not..  so I tried the manager again. -- And got no change.[3: 
+
+Thu Nov 17 17:15:42 2016 Then I did this:
+
+    $ groups
+    ackley ..a bunch of stuff not including libvirtd..
+    $ 
+[4: 
+
+Thu Nov 17 17:20:38 2016 Then I did this:
+
+    # usermod -a -G libvirtd ackley
+    # id ackley
+    uid=1000(ackley) ..more groups.. ,127(libvirtd)
+    # 
+
+But still the manager didn't work.  I suspected a
+failed-to-update-environment issue, because I still saw:
+
+    $ groups
+    ackley ..a bunch of stuff not including libvirtd..
+    $ 
+
+when I retried it.  And when I went to a new VT and logged in there,
+'groups' did include libvirtd.[5: 
+
+Thu Nov 17 17:26:00 2016 Sigh.  Logging out and back in to the WM..[6: 
+
+Thu Nov 17 17:27:19 2016 And that fixed it:
+
+    $ groups
+    ackley ..other groups then.. libvirtd
+    $ 
+[7: 
+
+Thu Nov 17 17:28:13 2016 And then virtual machine manager got
+further, showing localhost (QEMU).  I clicked right on that and picked
+'New'. 
+
+It gives me a warning saying 'KVM is not available..' 
+[8: 
+
+Thu Nov 17 17:37:15 2016 Back in synaptic, installed package
+  qemu-kvm[9: 
+
+Thu Nov 17 17:38:49 2016 That didn't change much, so tried installing
+aqemu, which claimed to be another GUI frontent, which pulled in qemu
+and qemu-user.  
+
+But that didn't get the virtual machine manager any further.  And then
+I tried running AQEMU itself, but got bogged down a few steps into its
+'first setup wizard'..  Bailed out.
+
+Trying an effing reboot gah.
+
+  :9]
+
+  :8]
+  :7]
+  :6]
+
+  :5]
+
+  :4]
+  :3]
+
+  :2]
+
+  :1]
+
+  :0][10: 
+
+Thu Nov 17 18:13:48 2016 After rebooting and screwing around, decided
+to try following this page:
+
+http://www.howtogeek.com/117635/how-to-install-kvm-and-create-virtual-machines-on-ubuntu/
+
+
+[11: 
+
+Thu Nov 17 18:14:51 2016 That got me to this:
+
+    ackley@EDO2016:~$ virsh -c qemu:///system list
+     Id    Name                           State
+    ----------------------------------------------------
+
+    ackley@EDO2016:~$ 
+
+since I'd already logged out and in and rebooted and etc..[12: 
+
+Thu Nov 17 18:35:31 2016 I downloaded ubuntu-16.04.1-desktop-i386.iso
+from http://releases.ubuntu.com/16.04/
+
+  :12]
+
+  :11]
+
+
+  :10][13: 
+
+Fri Nov 18 08:52:51 2016 OK so in my case the key to getting rid of
+the 'KVM is not available..' message -- and to making VMs run at
+reasonable speeds -- was rebooting and getting in to the laptop BIOS
+and checking the virtualization technology and virtualized io
+checkboxes somewhere inside that.  I have spent very little time in
+this laptop's BIOS!  It was unfamiliar looking!  
+
+But anyway, now I have an ubuntu 16.04 VM running plausibly in
+QEMU/KVM. 
+
+  :13][14: 
+
+Fri Nov 18 12:33:21 2016 After moving the flag to Placitas, I'm going
+to be trying to follow
+
+https://wiki.ubuntu.com/Kernel/BuildYourOwnKernel
+
+in my 16.04 VM, and we'll see how that goes.
+
+  :14]
+[15: 
+
+Sat Nov 19 11:09:01 2016 Issue: My 8GB VM wasn't big enough once
+kernel sources were added.  Build -test13 at 16GB and trying again. 
+
+[16: 
+
+Sat Nov 19 11:09:45 2016 Trap to watch out for.  When you do this: 
+
+    # apt-get build-dep linux-image-$(uname r)
+
+and get this:
+
+    E: You must put some 'source' URIs in your sources.list
+
+you need to go into synaptic and click on 'source' in repositories
+thing, plus the associated repo reload.
+
+
+  :16]
+
+
+
+  :15]
+[17: 
+
+Sat Nov 19 11:21:49 2016 Still following
+https://wiki.ubuntu.com/Kernel/BuildYourOwnKernel
+
+Next issue: 
+
+ - fakeroot debian/rules editconfigs blows up because we don't have
+   curses.h 
+
+   = solution: apt install ncurses-dev
+
+  :17][18: 
+
+Sat Nov 19 11:33:46 2016 Added a 
+
+  linux (4.4.0-47.68+MFMtest10) 
+
+stanza to debian.master/changelog.
+
+  :18]
+[19: 
+
+Sat Nov 19 13:50:15 2016 AAaaand.. trying to build from source from
+github blows out a 16GB VM.  Starting over with 32GB..  
+
+  :19][20: 
+
+Sat Nov 19 13:51:04 2016 
+
+CURRENT STANDING-START STEPS TO BUILDING A UBUNTU 16.04 KERNEL IN A VM
+
+ - Create 32GB VM with 2GB RAM and 4 cores (2 real)
+
+ - Install 16.04 without installing updates during install
+
+ - Get done, reboot, get sudo term
+
+ # apt-get install git emacs ncurses-dev synaptic
+In Synaptic -> Settings -> Repositories, check Source code; Close; Reload
+ # apt-get dist-upgrade
+COFFEE BREAK NUMBER ONE
+
+ # reboot
+ # apt-get build-dep linux-image-$(uname -r)
+
+ $ git clone git://kernel.ubuntu.com/ubuntu/ubuntu-xenial.git
+OOOH ME BLOCK YOU LOOONG TIME .. HOUR+
+ $ chmod a+x debian/rules
+ $ chmod a+x debian/scripts/*
+ $ chmod a+x debian/scripts/misc/*
+ $ fakeroot debian/rules clean
+ $ fakeroot debian/rules editconfigs # you need to go through each (Y, Exit, Y, Exit..) or get 
+
+[24: Sun Nov 20 09:14:10 2016 
+
+Add a
+[39: 
+
+  linux (4.4.0-47.68+mfmtest17) 
+
+stanza to debian.master/changelog, using a '+', and then only
+lowercase alphanum after.
+
+  :39]
+  linux (4.4.0-47.68-mfmtest12) 
+
+stanza to debian.master/changelog.
+
+Use a leading '-'[40: no don't  :40], not a '+', in your prefix, and include only
+lowercase letters and numbers, and probably start with a letter too,
+though who knows.[26: Sun Nov 20 09:59:43 2016 And aha -- that
+generated an error about PKG_ABI in some init function for hv.c,
+explicitly mentioning 'mfmtest12' as an unrecognized identifier.  
+
+(And guess who's on the copyright of that hv.c?  Yes, it's Microsoft.)
+
+Trying again with _mfmtest13..
+[27: 
+
+Sun Nov 20 10:01:50 2016 Nope, that failed fast with 
+
+ error in Version field string '4.4.0-47.68_mfmtest13':invalid character in revision number
+
+Trying '.mfmtest14'
+[28: Sun Nov 20 11:38:36 2016 (And note that test is still going
+now..  So >1.5hr anyway in this setup.) [29: 
+
+Sun Nov 20 11:46:31 2016 Compilation succeeded just now.  So, <2hr in
+this setup.
+
+  :29] :28]
+
+  :27]
+
+:26]
+
+[25: 
+
+Sun Nov 20 09:22:51 2016 
+
+Then
+
+fakeroot debian/rules clean
+
+and
+
+fakeroot debian/rules binary-headers binary-generic
+
+and wait for hours
+
+  :25]
+  :24]
+
+  :21]
+  :20]
+  
+[22: 
+
+Sun Nov 20 00:25:06 2016 Well, so I couldn't get building from git to
+work.  I kept getting mismatches between list of modules..  previous
+and current or something.
+
+So I fell back to the 
+
+$ apt-get source linux-image-$(uname -r)
+
+approach and got that to work.  Tired now.
+
+Tomorrow; next stop: Try to install and boot the result
+[23: 
+
+Sun Nov 20 09:10:49 2016 Well, but doing 'ls ../*.deb' gives me stuff
+like linux-headers-4.4.0-47_4.4.0-47.68_all.deb ... which is
+conspicuously missing my -mfmtest12 suffix I (thought I) had been
+putting on, following previous instructions..
+
+  :23]
+
+  :22][30: 
+
+Sun Nov 20 12:42:26 2016 OK, so, trying
+
+~/apt-get-dir/linux-4.4.0$ sudo dpkg -i ../*test14*.deb
+
+[31: 
+
+Sun Nov 20 12:43:31 2016 Which appears to have somewhat worked,
+although it says
+
+    dpkg: dependency problems prevent confirmation of linux-tools-4.4.0-47.68-generic:
+
+     linux-tools-4.4.0-47.68-generic depends on linux-tools-4.4.0-47.68; however: 
+      Package linux-tools-4.4.0-47.68 is not installed.
+
+Actually, it appears to have had the same problem with
+linux-cloud-tools-4.4.0-etc
+
+[32: 
+
+Sun Nov 20 12:45:59 2016 Trying a reboot anyway[33: 
+
+Sun Nov 20 12:47:40 2016 Which seems to not have gotten my suffix on
+anything..
+
+  :33]
+
+  :32]
+
+  :31]
+
+  :30]
+[34: 
+
+Sun Nov 20 14:17:13 2016 Started another build an hour or so ago
+retrying with '+mfmtest15'.  Not sure I ever did '+' with no caps
+before.  Still running at present.
+[35: 
+
+Sun Nov 20 14:37:41 2016 OK, build succeeded with +mfmtest15.  Trying
+to install that and see what happens.
+
+  :35]
+  :34]
+[36: 
+
+Sun Nov 20 15:23:05 2016 The install seemed to go okay (but we
+shouldn't install the *cloud* or the *tools* debs, because they don't
+work.   
+
+But the resulting uname after reboot said #mfmtest14, when I'd just
+built +mfmtest15.  
+
+Trying this:
+
+fakeroot debian/rules distclean
+fakeroot debian/rules clean
+fakeroot debian/rules binary-headers binary-generic
+
+..for the next two hours.  (Note the clean after the distclean appears
+to be necessary, to regenerate the debian/control file (and perhaps
+other stuff) that the distclean nukes.  Just another slightly
+counterintuitive bit, considering that the 'clean' target is a prereq
+for distclean in debian/rules..)
+
+[37: 
+
+Sun Nov 20 16:59:23 2016 OK, that worked.  Now doing 
+
+~/apt-get-dir.0$ sudo dpkg -i *-[hi]*test16*.deb
+
+[38: 
+
+Sun Nov 20 17:01:00 2016 Which is saying it's installing test16 over
+test15.  But we didn't have the fdr distclean before building test15,
+so we're hoping now the reboot will get us #mfmtest16 in uname -a.
+[41: 
+
+Sun Nov 20 23:02:01 2016 It didn't -- it still said #mfmtest14 -- but
+now we think that's due to the -mfmtest14 expt from earlier.  In a
+(relatively) newly created VM I'm using for a second try on git, uname
+-a is saying 'Linux dave-test15-git 4.4.0-47-generic #68-Ubuntu', so
+it kind of looks like it takes some last suffix and uses that.  
+
+So we're kind of expecting that even if the git build works, we won't
+see #mfmtest17 (or whatever I'm up to, here) in the uname
+
+  :41]
+  :38]
+
+  :37]
+
+  :36]
+[42: 
+
+Tue Nov 22 22:41:46 2016 OK, so, well, as far as I can tell I can't
+change the fucking version info in the debian.master/changelog in any
+way, without breaking the build.
+
+But if I do a clean checkout from git, and leave the changelog alone,
+and do the chmods, and the fdr clean and then fdr binary-headers
+binary-generic, I can get a clean build.  I just have no really clear
+way of even telling that I'm running the just-compiled build once I
+reboot.
+
+But fuck it.  Let's just push on towards making a module of some kind,
+and let the ultimate hoped-for existence of that be our proof.
+
+  :42][43: 
+
+Tue Nov 22 22:56:18 2016 Trying
+
+~$ sudo dpkg -i *-[hi]*386.deb
+
+which matches three files - a headers, an image, and an image-extra,
+all just made at 22:39 today..
+
+  :43]
+[44: 
+
+Tue Nov 22 23:03:57 2016 Commented out the GRUB_HIDDEN lines in
+/etc/default/grub and ran # update-grub.
+
+Rebooting.
+
+[45: 
+
+Tue Nov 22 23:05:37 2016 On reboot, it appears
+/lib/systemd/systemd-journald crashed.  SIGABRT in
+__libc_start_main().. 
+
+..Looking through the crash info.  Died on an add $0x10,%esp?  That
+seems pretty darn innocuous.  Maybe I'm bringing a 686 to an emulated
+386?  Could that be it?  But the system does seem to have mostly come
+up.. 
+
+Tried another reboot things seem to have come up okay.  Letting it
+ride for now.  How do I modify a module to add like a printk on module
+load or something?
+
+  :45]
+
+  :44]

@@ -1,0 +1,37 @@
+{3}  -*- text -*- 
+[0: 
+
+Thu Aug 25 02:05:43 2016 Looking at the PSoC 4 4200L family, as that
+seems to be the biggest of the bunch.
+
+[1: 
+
+Thu Aug 25 02:25:50 2016 Well, there's a PSoC 5..  Or 5LP..  Is that
+better? 
+
+Pros:
+Configurable logic blocks
+Very affordable < $13 qty 1
+20-24 universal data blocks
+
+Cons: 
+No linux on chip
+80 MHz
+Max 64KB RAM
+PSoC creator is windows only?
+
+  :1]
+
+  :0]
+[2: 
+
+Thu Aug 25 02:39:25 2016 How does tile size go?
+
+Site = 12B
+
+
+TILE_SIDE   Sites        RAM     %SITES VISIBLE 
+  20        400          4.8K       
+
+
+  :2]

@@ -1,0 +1,57 @@
+{2}  -*- text -*- 
+[0: 
+
+Fri Aug 26 05:12:23 2016 Questions browsing the MachXO2 data sheet
+(and technical note TN1203).
+
+ - 'Diamond' layout software toolchain run on linux?
+
+ - How many PICs actually are there on a given device?  How many on an
+   edge, since some functions are per edge?
+
+ - Could we use the IO gearboxes?  Would we need the IO gearboxes?
+
+'Each PIC has four programmable IOS (PIOs), which form two pairs of
+I/O buffers.'  Supporting an x4 gearing takes up all four PIOs in one
+PIC.  x4 can only be supported when A/B pair pins are available in the
+package.   Total number of x4 interfaces is determined by the total
+number of A/B paris.
+
+[1: 
+
+Fri Aug 26 07:15:21 2016 
+
+ - Apparently to use the 'hardened' SPI (or anything from the EFB) one
+   has to put a wishbone master into the core, 'such as a
+   LatticeMico8'.  
+
+   = Issues there: The Mico8 has a 'semi-open source license'.
+     According to wikipedia, developers are required to keep the
+     core's source code confidential and use "for the sole purposes of
+     design documentation and preparation of Derivative Works ... to
+     develop designs to program Lattice programmable logic devices".
+
+   = So, perhaps a bit better terms than say the xilinx MicroBlaze
+     license -- although it's hard to tell -- but not true open-source
+     like the zpuino.
+
+ - Also of concern: the Mico8 appears to top out around 50MHz.  If we
+   are running Mico8 code to break up the merged SPI stream from the
+   CPU and dish it out to the intertile drivers, and Mico8 code to mux
+   all the incoming packets back onto the the SPI stream to the CPU,
+   I'd be worried we'd easily be taking dozens or scores of
+   instructions per byte and end up no better than fast UART speeds.  
+
+ - According to http://elinux.org/index.php?title=RPi_SPI, for the
+   raspberry pi SPI, 'The fastest reported working speed is 32 MHz.'
+   for the SPI bus.  And if we're running the FPGA as a SPI slave, as
+   I understand it the maximum data rate is system clock/4, so we'd
+   have to be running the FPGA at 128MHz to get that.
+
+ right off the bat we're talking
+   8Mbps shared among either six or eight intertile channels, and
+   we're back down to no better than fast UART speeds.
+
+  :1]
+
+  :0]
