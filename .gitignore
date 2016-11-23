@@ -1,3 +1,9 @@
+# Ignore emacs backup files
+*~
+
+# Leave out unofficially '-held' files
+*-hold
+
 # Compiled Object files
 *.slo
 *.lo
