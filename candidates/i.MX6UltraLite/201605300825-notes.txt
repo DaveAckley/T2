@@ -1,0 +1,20 @@
+{1}  -*- text -*- 
+[0: 
+
+Mon May 30 08:25:42 2016 i.MX6UL based boards
+
+PROS:
+
+ - 8 UARTs possible, up to 5Mbps, 32 byte TX and RX FIFOs, DMA
+   allegedly supported by fsl_lpuart driver
+
+ - Cheap cheap!  E.g., Compulab SOM-iMX6UL-C528-D256-N128-U2 (256MB
+   RAM, 128MB NAND SLC) is $29ea/1K, or $58ea/10
+
+ - Pretty low power, like 0.25 - 2 W depending.
+
+CONS:
+
+ - Only 528MHz..
+
+  :0]

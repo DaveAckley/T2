@@ -1,0 +1,31 @@
+{1}  -*- text -*- 
+[0: 
+
+Supply: 4.2 - 5V
+
+PROS:
+
+ - NINE FUCKING NINE TI-style 16C750 UARTs, 'up to 12 Mbps',
+   presumably with DMA etc.
+
+ - 1.5GHz
+
+ - Compulab CL-SOM-AM57x exists
+
+ - Dual core option
+
+CONS:
+
+ - 2.5–6.5W depending on config 2.5W/5V .. 6.5W/4.2V -> 500mA .. 1.5A
+
+ - Compulab CL-SOM-AM57x is $100ea/1K with 512MB flash, $111ea/1K for
+   dual core, which means $200 ea qty 10
+
+
+JUDGMENT:
+
+  Maybe..  It's definitely a possibility, but the tile price would
+  likely be over $250, perhaps pushing $300, which is getting pretty
+  embarrassing regardless of what story we try to tell..
+
+  :0]

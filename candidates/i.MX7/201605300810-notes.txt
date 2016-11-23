@@ -1,0 +1,16 @@
+{1}  -*- text -*- 
+[0: 
+
+Mon May 30 08:10:48 2016 NXP i.MX7 based modules.
+
+PROS:
+
+ - 1GHz
+
+ - Cheap
+
+CONS:
+
+ - Only 7 UARTs??
+
+  :0]
